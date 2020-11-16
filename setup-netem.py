@@ -34,7 +34,9 @@ import socket
 import sys
 import threading
 import time
+import config
 
+TC_PATH = '/root/iproute2/tc/tc'
 
 def run(cmd, verbose=True):
     if verbose:
@@ -53,46 +55,6 @@ def netem_limit(rate, delay, buf):
     bdp = int(bdp_bytes / 1500.0)
     limit = bdp + buf
     return limit
-
-def get_params():
-    # Invocations of this tool should set the following parameters as
-    # environment variables.
-    params = {
-        'bw':          -1, # input bottleneck bw in Mbit/sec; required
-        'rtt':         -1, # RTT in ms; required
-        'buf':         -1, # input bottleneck buffer in packets; required
-        'loss':         0, # input bottleneck loss rate in percent; optional
-        'interval':     0, # interval between flow starts, in secs; optional
-        'dur':         -1, # length of test in secs: required
-        'outdir':      '', # output directory for results
-        'qdisc':       '', # qdisc at downstream bottleneck (empty for FIFO)
-        'cmd':         '', # command to run (e.g. set sysctl values)
-        'pcap':         0, # bytes per packet to capture; 0 for no tracing
-    }
-
-    for key in params.keys():
-        print('parsing key %s' % key)
-        if key in os.environ:
-           print('looking at env var with key %s, val %s' % (key, os.environ[key]))
-        else:
-           print('no env var with key %s' % (key))
-        if key not in os.environ:
-            if params[key] != 0:
-              sys.stderr.write('missing %s in environment variables\n' % key)
-              sys.exit(1)
-        elif type(params[key]) == str:
-            params[key] = os.environ[key]
-        else:
-            params[key] = float(os.environ[key])
-
-    print(params)
-    params['netperf'] = netperf()
-    params['receiver_ip'] = '192.168.3.11'
-    # 10Gbit/sec * 100ms is 125MBytes, so to tolerate
-    # high loss rates and lots of SACKed data, we use
-    # 512MByte socket send and receive buffers:
-    params['mem'] = 536870912
-    return params
 
 def setup_netem(params):
     """Set up netem on the crt (client router) host."""
@@ -138,10 +100,16 @@ def setup_netem(params):
 
     c += ('ip netns exec %(host)s %(tc)s -stat qdisc show\n') % d
 
+	# set delay of client2
+    d['host'] = 'crt'
+    c += ('ip netns exec %(host)s %(tc)s qdisc add dev crt2.r root netem delay 100ms\n') % d
+
+    c += ('ip netns exec %(host)s %(tc)s -stat qdisc show\n') % d
+
     run(c)
 
 def main():
-    params = get_params()
+    params = config.params
     setup_netem(params)
     return 0
 

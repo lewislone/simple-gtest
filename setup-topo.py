@@ -93,7 +93,9 @@ def setup_veth():
     c += 'ip netns exec mid ip link set mid.l up\n'
     c += 'ip netns exec crt ip link set crt.r up\n'
     c += 'ip netns exec crt ip link set crt.l up\n'
+    c += 'ip netns exec crt ip link set crt2.r up\n'
     c += 'ip netns exec cli ip link set cli.l up\n'
+    c += 'ip netns exec cli2 ip link set cli2.l up\n'
 
     # Disable TSO, GSO, GRO, or else netem limit is interpreted per
     # multi-MSS skb, not per packet on the emulated wire.
@@ -146,6 +148,7 @@ def setup_routes():
     # client router
     c += 'h=crt\n'
     c += 'ip netns exec $h ip route add default via 192.168.2.1 dev $h.l\n'
+    c += 'ip netns exec crt ip route add 192.168.3.12 via 192.168.3.2 dev crt2.r\n'
 
     # cli
     c += 'h=cli\n'

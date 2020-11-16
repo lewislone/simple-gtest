@@ -19,5 +19,8 @@ def cleanup():
         run('( ip netns exec %(host)s ip link del dev %(host)s.l; '
             '  ip netns exec %(host)s ip link del dev %(host)s.r; '
             '  ip netns del %(host)s ) 2> /dev/null'  % {'host' : host})
+
+    run('pkill -f netserver')
+    run('pkill -f netperf')
 if __name__ == '__main__':
     sys.exit(cleanup())
