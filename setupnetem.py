@@ -100,19 +100,20 @@ def setup_netem(params):
 
     c += ('ip netns exec %(host)s %(tc)s -stat qdisc show\n') % d
 
-	# set delay of client2
+    # set delay of client2
     d['host'] = 'crt'
-    c += ('ip netns exec %(host)s %(tc)s qdisc add dev crt2.r root netem delay 100ms\n') % d
+    d['rtt2'] = params['rtt2'] 
+    c += ('ip netns exec %(host)s %(tc)s qdisc add dev crt2.r root netem limit 10000 delay %(rtt2)sms\n') % d
 
     c += ('ip netns exec %(host)s %(tc)s -stat qdisc show\n') % d
 
     run(c)
 
-def main():
-    params = config.params
+def netem(config):
+    params = config
     setup_netem(params)
     return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(netem())
