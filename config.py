@@ -22,12 +22,12 @@ def bdp_pkts(bw, rtt, bdp_of_buf):
 default = {
     'bw':          100, # input bottleneck bw in Mbit/sec; required
     'rtt':         10, # RTT in ms of client; required
-    'rtt2':        0, # RTT in ms of client2; optional 
-    'buf':         bdp_pkts(100, 10, 0.5), # input bottleneck buffer in packets; required
+    'rtt2':        40, # RTT in ms of client2; optional 
+    'buf':         bdp_pkts(100, 10, 2), # input bottleneck buffer in packets; required
     'loss':         0, # input bottleneck loss rate in percent; optional
     'interval':     0, # interval between flow starts, in secs; optional
-    'dur':         300, # length of test in secs: required
-    'outdir':      '', # output directory for results
+    'dur':         60, # length of test in secs: required
+    'outdir':      'out', # output directory for results
     'qdisc':       '', # qdisc at downstream bottleneck (empty for FIFO)
     'cmd':         '', # command to run (e.g. set sysctl values)
     'pcap':         0, # bytes per packet to capture; 0 for no tracing
@@ -41,7 +41,7 @@ random_loss = {
     'loss':         0.1, # input bottleneck loss rate in percent; optional
     'interval':     0, # interval between flow starts, in secs; optional
     'dur':         60, # length of test in secs: required
-    'outdir':      '', # output directory for results
+    'outdir':      'out', # output directory for results
     'qdisc':       '', # qdisc at downstream bottleneck (empty for FIFO)
     'cmd':         '', # command to run (e.g. set sysctl values)
     'pcap':         0, # bytes per packet to capture; 0 for no tracing
@@ -55,7 +55,7 @@ bufferbloat = {
     'loss':         0, # input bottleneck loss rate in percent; optional
     'interval':     0, # interval between flow starts, in secs; optional
     'dur':         120, # length of test in secs: required
-    'outdir':      '', # output directory for results
+    'outdir':      'out', # output directory for results
     'qdisc':       '', # qdisc at downstream bottleneck (empty for FIFO)
     'cmd':         '', # command to run (e.g. set sysctl values)
     'pcap':         0, # bytes per packet to capture; 0 for no tracing
@@ -69,7 +69,7 @@ shallow = {
     'loss':         0, # input bottleneck loss rate in percent; optional
     'interval':     0, # interval between flow starts, in secs; optional
     'dur':         200, # length of test in secs: required
-    'outdir':      '', # output directory for results
+    'outdir':      'out', # output directory for results
     'qdisc':       '', # qdisc at downstream bottleneck (empty for FIFO)
     'cmd':         '', # command to run (e.g. set sysctl values)
     'pcap':         0, # bytes per packet to capture; 0 for no tracing

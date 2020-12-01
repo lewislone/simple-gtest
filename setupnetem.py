@@ -65,6 +65,7 @@ def setup_netem(params):
     d['IRATE']   = params['bw']      # Mbit/sec
     d['IDELAY']  = params['rtt'] / 2 # ms
     d['IBUF']    = params['buf']     # packets
+    d['IBUF']    = params['buf']     # packets
     d['ILOSS']   = params['loss']
     d['IREO']    = 0  # TODO: not implemented yet
     d['ILIMIT'] = netem_limit(rate=d['IRATE'], delay=d['IDELAY'], buf=d['IBUF'])
@@ -101,9 +102,13 @@ def setup_netem(params):
     c += ('ip netns exec %(host)s %(tc)s -stat qdisc show\n') % d
 
     # set delay of client2
-    d['host'] = 'crt'
+    #d['host'] = 'crt'
+    #d['rtt2'] = params['rtt2'] 
+    #c += ('ip netns exec %(host)s %(tc)s qdisc add dev crt2.r root netem limit 999999 delay %(rtt2)sms rate 1000Mbit\n') % d
+    d['host'] = 'cli2'
     d['rtt2'] = params['rtt2'] 
-    c += ('ip netns exec %(host)s %(tc)s qdisc add dev crt2.r root netem limit 10000 delay %(rtt2)sms\n') % d
+    #c += ('ip netns exec %(host)s %(tc)s qdisc add dev cli2.l root netem limit 999999 delay %(rtt2)sms rate 1000Mbit\n') % d
+    c += ('ip netns exec %(host)s %(tc)s qdisc add dev cli2.l root netem limit 999999 rate 1000Mbit\n') % d
 
     c += ('ip netns exec %(host)s %(tc)s -stat qdisc show\n') % d
 
@@ -116,4 +121,4 @@ def netem(config):
 
 
 if __name__ == '__main__':
-    sys.exit(netem())
+    sys.exit(netem(config.params))

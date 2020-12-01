@@ -5,23 +5,23 @@ import socket
 import sys
 import time
 import re
-from matplotlib.pyplot import *
+#from matplotlib.pyplot import *
 
 
 def parse_data():
-    buffer=[0.5, 0.7, 1, 1.5, 2, 3, 4, 5, 6, 7]
-    rtt2=[10, 20, 30, 40, 50, 60, 70, 80]
-    CC=["bbr"]
+    buffer=[1, 7]
+    rtt2=[0,  40]
+    CC=["orgbbr"]
     tp={}
-    tp["bbr-litter-rtt"] = {}
-    tp["bbr-long-rtt"] = {}
+    tp["orgbbr-litter-rtt"] = {}
+    tp["orgbbr-long-rtt"] = {}
 
     for cc in CC:
         for rtt in rtt2:
             for buf in buffer:
-                tp["bbr-litter-rtt"][str(rtt)] = {}
+                tp["orgbbr-litter-rtt"][str(rtt)] = {}
                 #tp["bbr-litter-rtt"][str(rtt)][str(buf)] = {}
-                tp["bbr-long-rtt"][str(rtt)] = {}
+                tp["orgbbr-long-rtt"][str(rtt)] = {}
                 #tp["bbr-long-rtt"][str(rtt)][str(buf)] = {}
     print tp
     
@@ -29,17 +29,19 @@ def parse_data():
         for rtt in rtt2:
             for buf in buffer:
                 outfile = "out/%s_coexist-litte-rtt-%d-buf-%.1f.log" % (cc, rtt, buf)
+                print outfile
                 fp = open(outfile, "r")
                 next(fp)
                 for line in fp:
-                    tp["bbr-litter-rtt"][str(rtt)][str(buf)]=float(line.split('=')[1])
+                    tp["orgbbr-litter-rtt"][str(rtt)][str(buf)]=float(line.split('=')[1])
                     break
 
                 outfile = "out/%s_coexist-largh-rtt-%d-buf-%.1f.log" % (cc, rtt, buf)
+                print outfile
                 fp = open(outfile, "r")
                 next(fp)
                 for line in fp:
-                    tp["bbr-long-rtt"][str(rtt)][str(buf)]=float(line.split('=')[1])
+                    tp["orgbbr-long-rtt"][str(rtt)][str(buf)]=float(line.split('=')[1])
                     break
     print tp
     return tp
@@ -49,7 +51,7 @@ if __name__ == '__main__':
 
     data = parse_data()
     print len(data)
-    for item in streams:
+    for item in data:
         #cwnd = [int(cwnd) for cwnd in stream['cwnd']]
         #ssthresh = [int(ssthresh) for ssthresh in stream['ssthresh']]
         #rtt = [float(rtt) for rtt in stream['rtt']]
