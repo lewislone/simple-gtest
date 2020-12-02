@@ -27,11 +27,20 @@ h2 = net.addHost('h2',ip='10.0.5.2')
 c0 = net.addController('c0')
 net.addLink(h1,r1,intfName1='h1-eth0',intfName2='r1-eth0',cls=TCLink , bw=nonbottlebw, delay='10ms', max_queue_size=nonbottleneckQ)
 net.addLink(r1,r3,intfName1='r1-eth1',intfName2='r3-eth0',cls=TCLink , bw=nonbottlebw, delay='10ms', max_queue_size=nonbottleneckQ)
-net.addLink(r3,h2,intfName1='r3-eth1',intfName2='h2-eth0',cls=TCLink , bw=bottleneckbw, delay='20ms', max_queue_size=bottleneckQ)
-net.addLink(h1,r2,intfName1='h1-eth1',intfName2='r2-eth0',cls=TCLink , bw=nonbottlebw, delay='20ms', max_queue_size=nonbottleneckQ)
-net.addLink(r2,r3,intfName1='r2-eth1',intfName2='r3-eth2',cls=TCLink , bw=nonbottlebw, delay='30ms', max_queue_size=nonbottleneckQ)
+net.addLink(r3,h2,intfName1='r3-eth1',intfName2='h2-eth0',cls=TCLink , bw=bottleneckbw, delay='10ms', max_queue_size=bottleneckQ)
+net.addLink(h1,r2,intfName1='h1-eth1',intfName2='r2-eth0',cls=TCLink , bw=nonbottlebw, delay='30ms', max_queue_size=nonbottleneckQ)
+net.addLink(r2,r3,intfName1='r2-eth1',intfName2='r3-eth2',cls=TCLink , bw=nonbottlebw, delay='50ms', max_queue_size=nonbottleneckQ)
 
 net.build()
+
+cmd=""
+cmd+="mkdir /var/run/net\n"
+cmd+="ln -s /proc/%d/ns/net /var/run/netns/h1\n" % h1.pid
+cmd+="ln -s /proc/%d/ns/net /var/run/netns/r1\n" % r1.pid
+cmd+="ln -s /proc/%d/ns/net /var/run/netns/r2\n" % r2.pid
+cmd+="ln -s /proc/%d/ns/net /var/run/netns/r3\n" % r3.pid
+cmd+="ln -s /proc/%d/ns/net /var/run/netns/h2\n" % h2.pid
+os.system(cmd)
 
 h1.cmd("ifconfig h1-eth0 10.0.1.1/24")
 h1.cmd("ifconfig h1-eth1 10.0.3.1/24")
@@ -43,7 +52,7 @@ h1.cmd("ip route add 10.0.3.1/24 dev h1-eth1 table 5001")
 h1.cmd("ip route add default via 10.0.3.2 dev h1-eth1 table 5001")
 h1.cmd("ip rule add from 10.0.1.1 table 5000")
 h1.cmd("ip rule add from 10.0.3.1 table 5001")
-h1.cmd("ip route add default gw 10.0.1.2  dev h1-eth0")
+#h1.cmd("ip route add default gw 10.0.1.2  dev h1-eth0")
 #that be a must or else a tcp client would not know how to route packet out
 h1.cmd("route add default gw 10.0.1.2  dev h1-eth0") #would not work for the second part when a tcp client bind a address
 
@@ -80,3 +89,9 @@ time.sleep(1)
 CLI(net)
 net.stop()
 print "stop"
+cmd="rm /var/run/netns/h1\n"
+cmd+="rm /var/run/netns/r1\n"
+cmd+="rm /var/run/netns/r2\n"
+cmd+="rm /var/run/netns/r3\n"
+cmd+="rm /var/run/netns/h2\n"
+os.system(cmd)

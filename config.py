@@ -21,9 +21,9 @@ def bdp_pkts(bw, rtt, bdp_of_buf):
 
 default = {
     'bw':          100, # input bottleneck bw in Mbit/sec; required
-    'rtt':         10, # RTT in ms of client; required
-    'rtt2':        40, # RTT in ms of client2; optional 
-    'buf':         bdp_pkts(100, 10, 2), # input bottleneck buffer in packets; required
+    'rtt':         50, # RTT in ms of client; required
+    'rtt2':        100, # RTT in ms of client2; optional 
+    'buf':         bdp_pkts(100, 50, 1), # input bottleneck buffer in packets; required
     'loss':         0, # input bottleneck loss rate in percent; optional
     'interval':     0, # interval between flow starts, in secs; optional
     'dur':         60, # length of test in secs: required
