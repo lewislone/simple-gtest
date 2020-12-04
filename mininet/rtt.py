@@ -9,9 +9,9 @@ import subprocess
 import os,signal
 import sys
 #    ___r1____
-#   /          \0  1
+#   /          \ 
 # h1            r3---h2
-#  \           /2
+#  \           /
 #   ---r2-----
 bottleneckbw=20
 nonbottlebw=500;
@@ -34,7 +34,7 @@ net.addLink(r2,r3,intfName1='r2-eth1',intfName2='r3-eth2',cls=TCLink , bw=nonbot
 net.build()
 
 cmd=""
-cmd+="mkdir /var/run/net\n"
+cmd+="mkdir /var/run/netns\n"
 cmd+="ln -s /proc/%d/ns/net /var/run/netns/h1\n" % h1.pid
 cmd+="ln -s /proc/%d/ns/net /var/run/netns/r1\n" % r1.pid
 cmd+="ln -s /proc/%d/ns/net /var/run/netns/r2\n" % r2.pid
@@ -83,12 +83,13 @@ r2.cmd('sysctl net.ipv4.ip_forward=1')
 
 h2.cmd("ifconfig h2-eth0 10.0.5.2/24")
 h2.cmd("route add default gw 10.0.5.1")
-#ping -I src dst
+
 net.start()
 time.sleep(1)
 CLI(net)
 net.stop()
 print "stop"
+
 cmd="rm /var/run/netns/h1\n"
 cmd+="rm /var/run/netns/r1\n"
 cmd+="rm /var/run/netns/r2\n"
